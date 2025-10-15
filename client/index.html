@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Catalog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; background: #0b1020; color: #e6e8ee; }
+      header { display:flex; align-items:center; justify-content:space-between; padding: 16px 24px; border-bottom: 1px solid #223; background: #0e1430; position: sticky; top:0; }
+      .title { font-weight: 600; letter-spacing: 0.3px; }
+      .actions { display:flex; gap: 8px; flex-wrap: wrap; }
+      button { background:#2a60ff; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600; }
+      button.secondary { background:#26304a; }
+      button.warning { background:#ea4335; }
+      main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+      .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px; }
+      .card { background:#111833; border:1px solid #223; border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+      .card img { width:100%; height:160px; object-fit:cover; background:#0b1020; }
+      .card .content { padding:12px; display:flex; flex-direction:column; gap:6px; }
+      .price { color:#8dd0ff; font-weight:600; }
+      .toolbar { display:flex; gap:8px; margin-top:8px; }
+      .modal { position: fixed; inset: 0; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,0.55); }
+      .modal.open { display:flex; }
+      .panel { width: min(920px, 92vw); max-height: 88vh; overflow:auto; background:#0e1430; border:1px solid #223; border-radius:12px; padding:16px; }
+      .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
+      .field { display:flex; flex-direction:column; gap:6px; }
+      .field label { font-size:12px; color:#9aa7c7; }
+      .field input, .field textarea { background:#0b1020; border:1px solid #223; color:#e6e8ee; border-radius:8px; padding:10px; }
+      .muted { color:#9aa7c7; font-size: 12px; }
+      .stack { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+      .chips { display:flex; gap:8px; flex-wrap:wrap; }
+      .chip { background:#0b1020; border:1px solid #223; color:#9aa7c7; border-radius:999px; padding:4px 8px; font-size:12px; }
+      .section { margin-top:12px; padding-top:12px; border-top:1px solid #223; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="title">Product Catalog</div>
+      <div class="actions">
+        <button id="btn-create">Create</button>
+        <button id="btn-read" class="secondary">Read / Search</button>
+        <button id="btn-clear" class="secondary">Clear Search</button>
+        <button id="btn-history" class="secondary">History</button>
+      </div>
+    </header>
+    <main>
+      <div class="chips" id="active-filters"></div>
+      <div class="grid" id="grid"></div>
+    </main>
+
+    <div class="modal" id="modal">
+      <div class="panel">
+        <div class="stack">
+          <div style="font-weight:600" id="modal-title">Form</div>
+          <span class="muted" id="modal-subtitle"></span>
+          <div style="flex:1"></div>
+          <button id="btn-close" class="secondary">Close</button>
+        </div>
+        <div class="section">
+          <div class="form-grid" id="form-grid"></div>
+          <div class="stack" style="margin-top:12px;">
+            <button id="btn-add-field" class="secondary">Add Field</button>
+            <span class="muted">Dynamic fields supported. No duplicate field names.</span>
+            <div style="flex:1"></div>
+            <button id="btn-submit">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="history-modal">
+      <div class="panel">
+        <div class="stack">
+          <div style="font-weight:600">History</div>
+          <div style="flex:1"></div>
+          <button id="btn-close-history" class="secondary">Close</button>
+        </div>
+        <div id="history-list" class="section"></div>
+      </div>
+    </div>
+
+    <script type="module">
+      const API_BASE = '/api'; // assume same origin via reverse-proxy or dev proxy
+      const grid = document.getElementById('grid');
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalSubtitle = document.getElementById('modal-subtitle');
+      const formGrid = document.getElementById('form-grid');
+      const btnSubmit = document.getElementById('btn-submit');
+      const btnAddField = document.getElementById('btn-add-field');
+      const activeFilters = document.getElementById('active-filters');
+      const historyModal = document.getElementById('history-modal');
+      const historyList = document.getElementById('history-list');
+
+      const baseFields = [
+        'Uniq Id','Product Name','Category','Upc Ean Code','Selling Price','Model Number','About Product','Product Specification','Technical Details','Shipping Weight','Product Dimensions','Image','Variants','Product Url','Is Amazon Seller'
+      ];
+
+      let currentList = [];
+      let currentFilters = {};
+      let mode = 'create'; // 'create' | 'read' | 'update' | 'delete'
+      let lockedUniqId = null;
+
+      function openModal(kind, options = {}) {
+        mode = kind;
+        modal.classList.add('open');
+        formGrid.innerHTML = '';
+        modalTitle.textContent = kind === 'create' ? 'Create Product' : kind === 'read' ? 'Search Products' : kind === 'update' ? 'Update Product' : 'Delete Products';
+        modalSubtitle.textContent = kind === 'update' && options.uniqId ? `Editing ${options.uniqId}` : '';
+        const initial = options.initial || {};
+        lockedUniqId = kind === 'update' ? options.uniqId || initial['Uniq Id'] : null;
+
+        const fields = new Set([...baseFields, ...Object.keys(initial)]);
+        for (const name of fields) addFieldRow(name, initial[name] ?? '');
+
+        // Uniq Id safety: editable on create/search/delete, read-only on update
+        const uniqInput = formGrid.querySelector('[data-name="Uniq Id"] input');
+        if (uniqInput) {
+          uniqInput.value = initial['Uniq Id'] || options.uniqId || '';
+          uniqInput.disabled = (kind === 'update');
+        }
+      }
+
+      function addFieldRow(name = '', value = '') {
+        const wrap = document.createElement('div');
+        wrap.className = 'field';
+        wrap.dataset.name = name;
+        const id = 'f_' + Math.random().toString(36).slice(2);
+        wrap.innerHTML = `
+          <label for="${id}">${name || 'New Field Name'}</label>
+          <input id="${id}" value="${value ?? ''}" placeholder="${name || 'Enter value'}" />
+        `;
+        formGrid.appendChild(wrap);
+        return wrap;
+      }
+
+      btnAddField.addEventListener('click', () => {
+        const name = prompt('Enter new field name (no duplicates):');
+        if (!name) return;
+        const exists = [...formGrid.children].some(n => (n.dataset.name || n.querySelector('label').textContent) === name);
+        if (exists) { alert('Field already exists'); return; }
+        const node = addFieldRow(name, '');
+        node.dataset.name = name;
+      });
+
+      document.getElementById('btn-close').addEventListener('click', () => modal.classList.remove('open'));
+      document.getElementById('btn-close-history').addEventListener('click', () => historyModal.classList.remove('open'));
+
+      async function fetchJSON(url, options) {
+        const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+
+      function collectFormData() {
+        const data = {};
+        for (const node of formGrid.children) {
+          const name = node.dataset.name || node.querySelector('label').textContent;
+          const value = node.querySelector('input,textarea').value;
+          if (value !== '') data[name] = value;
+        }
+        return data;
+      }
+
+      btnSubmit.addEventListener('click', async () => {
+        try {
+          const data = collectFormData();
+          if (mode === 'create') {
+            await fetchJSON(`${API_BASE}/products`, { method: 'POST', body: JSON.stringify(data) });
+            await loadProducts();
+          } else if (mode === 'read') {
+            currentFilters = data;
+            await searchProducts(data);
+          } else if (mode === 'update') {
+            const uniqId = lockedUniqId || data['Uniq Id'];
+            if (!uniqId) return alert('Missing Uniq Id to update');
+            delete data['Uniq Id'];
+            await fetchJSON(`${API_BASE}/products/${encodeURIComponent(uniqId)}`, { method: 'PUT', body: JSON.stringify(data) });
+            await loadProducts();
+          } else if (mode === 'delete') {
+            if (data['Uniq Id']) {
+              await fetchJSON(`${API_BASE}/products/${encodeURIComponent(data['Uniq Id'])}`, { method: 'DELETE' });
+            } else {
+              await fetchJSON(`${API_BASE}/products`, { method: 'DELETE', body: JSON.stringify({ filter: data }) });
+            }
+            await loadProducts();
+          }
+          modal.classList.remove('open');
+        } catch (e) {
+          alert('Error: ' + e.message);
+        }
+      });
+
+      async function renderList(list) {
+        currentList = list;
+        grid.innerHTML = '';
+        for (const p of list) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          const img = document.createElement('img');
+          img.src = p['Image'] || 'https://picsum.photos/seed/product/400/300';
+          img.alt = p['Product Name'] || 'Product';
+          card.appendChild(img);
+          const content = document.createElement('div');
+          content.className = 'content';
+          const name = document.createElement('div');
+          name.textContent = p['Product Name'] || '(no name)';
+          const price = document.createElement('div');
+          price.className = 'price';
+          price.textContent = p['Selling Price'] || '';
+          const toolbar = document.createElement('div');
+          toolbar.className = 'toolbar';
+          const btnU = document.createElement('button');
+          btnU.textContent = 'Update';
+          btnU.className = 'secondary';
+          btnU.addEventListener('click', () => openModal('update', { uniqId: p['Uniq Id'], initial: p }));
+          const btnD = document.createElement('button');
+          btnD.textContent = 'Delete';
+          btnD.className = 'warning';
+          btnD.addEventListener('click', async () => {
+            if (!confirm('Delete this product?')) return;
+            await fetchJSON(`${API_BASE}/products/${encodeURIComponent(p['Uniq Id'])}`, { method: 'DELETE' });
+            await loadProducts();
+          });
+          toolbar.append(btnU, btnD);
+          content.append(name, price, toolbar);
+          card.appendChild(content);
+          grid.appendChild(card);
+        }
+      }
+
+      async function loadProducts() {
+        const data = await fetchJSON(`${API_BASE}/products`);
+        renderFilters({});
+        await renderList(data);
+      }
+
+      async function searchProducts(filter) {
+        const qs = new URLSearchParams(filter).toString();
+        const data = await fetchJSON(`${API_BASE}/products?${qs}`);
+        renderFilters(filter);
+        await renderList(data);
+      }
+
+      function renderFilters(filters) {
+        currentFilters = filters;
+        activeFilters.innerHTML = '';
+        Object.entries(filters).forEach(([k, v]) => {
+          const chip = document.createElement('div');
+          chip.className = 'chip';
+          chip.textContent = `${k}: ${v}`;
+          activeFilters.appendChild(chip);
+        });
+      }
+
+      document.getElementById('btn-create').addEventListener('click', () => openModal('create'));
+      document.getElementById('btn-read').addEventListener('click', () => openModal('read'));
+      document.getElementById('btn-clear').addEventListener('click', () => loadProducts());
+      document.getElementById('btn-history').addEventListener('click', async () => {
+        historyModal.classList.add('open');
+        try {
+          const items = await fetchJSON(`${API_BASE}/history`);
+          historyList.innerHTML = items.map(it => `<div class="section"><div><b>${it.action}</b> — ${new Date(it.createdAt).toLocaleString()}</div><pre class="muted" style="white-space:pre-wrap">${JSON.stringify({ uniqId: it.uniqId, filter: it.filter, changes: it.changes }, null, 2)}</pre></div>`).join('');
+        } catch (e) {
+          alert('Failed to load history');
+        }
+      });
+
+      // Initialize list
+      loadProducts().catch(() => {
+        grid.innerHTML = '<div class="muted">Backend not reachable. Start server on port 4000.</div>';
+      });
+    </script>
+  </body>
+  </html>
+
+
