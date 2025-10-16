@@ -86,7 +86,7 @@ curl http://localhost:4000/api/products
 
 ## Quick local setup (Windows)
 
-Follow these steps carefully using **PowerShell** (recommended) or **Command Prompt**. Adjust database and collection names as needed.
+Follow these steps carefully using **PowerShell** (recommended) or **Command Prompt**.
 
 1) **Create a local MongoDB data directory:**
 
