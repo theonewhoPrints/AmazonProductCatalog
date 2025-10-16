@@ -7,7 +7,7 @@ The server expects a MongoDB instance, and the sample CSV provided in the reposi
 
 ## Quick local setup (macOS)
 
-Follow these steps in order. Copy/paste the commands into a terminal. Adjust DB/collection names if you prefer.
+Follow these steps in order. Copy/paste the commands into a terminal. 
 
 1) **Create a local MongoDB data directory:**
 
@@ -168,9 +168,3 @@ curl http://localhost:4000/api/health
 
 curl http://localhost:4000/api/products
 ```
-
----
-
-✅ **Tip:** You can also use [MongoDB Compass](https://www.mongodb.com/products/compass) on Windows or macOS to visually inspect your imported data and verify the connection to your local instance.
-
----
