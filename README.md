@@ -19,7 +19,7 @@ mkdir -p ~/data/db
 
 ```bash
 brew tap mongodb/brew
-brew install mongodb-community@6.0
+brew install mongodb-community
 brew services start mongodb/brew/mongodb-community
 ```
 
