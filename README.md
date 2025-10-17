@@ -82,7 +82,7 @@ If it isn't, update via https://nodejs.org/en/download
 2) **Install MongoDB Community Server, MongoDB Shell, and MongoDB Database Tools :**
 
 - follow the youtube video below 
-- https://www.youtube.com/watch?v=jvaBaxlTqU8 (stop at timestamp 4:41, and don't install MongoDb Compass it's not needed, you can disregard the videos portion on it.)
+- https://www.youtube.com/watch?v=jvaBaxlTqU8 HOWEVER, don't install MongoDb Compass it's not needed, you can skip the videos portion on it. Stop at timestamp 4:41.
 - the same steps you did for MongoDB Shell in the video, do ALL for MongoDB database tools (download here): https://www.mongodb.com/try/download/database-tools
 - (make sure you added mongodb database tools to your env path variables, and also to the same folder in program files, just as was done for MongoDB Shell)
 
