@@ -85,6 +85,7 @@ If it isn't, update via https://nodejs.org/en/download
 - https://www.youtube.com/watch?v=jvaBaxlTqU8 HOWEVER, don't install MongoDb Compass it's not needed, you can skip the videos portion on it. Stop at timestamp 4:41.
 - the same steps you did for MongoDB Shell in the video, do ALL for MongoDB database tools (download here): https://www.mongodb.com/try/download/database-tools
 - (make sure you added mongodb database tools to your env path variables, and also to the MongoDB folder in program files, just as was done for MongoDB Shell)
+- (make sure the env path you add is from the bin folder of mongodb database tools, it should look something like this: C:\Program Files\MongoDB\mongodb-database-tools-windows-x86_64-100.13.0\bin)
 
 3) **PreReq permissions needed to use npm in powershell** 
 - first, go to windows start button, and run powershell as adminstrator, once inside run the command:
