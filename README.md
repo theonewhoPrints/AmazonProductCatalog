@@ -2,7 +2,7 @@
 
 This project is a simple product catalog server (Express + Mongoose) and a client static SPA.  
 The server expects a MongoDB instance, and the sample CSV provided in the repository can be imported into MongoDB.
-
+Demo: https://drive.google.com/file/d/1osFddRu3bSasuftJB10fneXz52GD_cto/view?usp=sharing
 ---
 
 ## Quick local setup (macOS) - should be done in MacOS Terminal
