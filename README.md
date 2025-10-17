@@ -5,7 +5,7 @@ The server expects a MongoDB instance, and the sample CSV provided in the reposi
 
 ---
 
-## Quick local setup (macOS)
+## Quick local setup (macOS) - you should have two terminals open 
 
 Follow these steps in order. Copy/paste the commands into a terminal. 
 
@@ -15,7 +15,8 @@ Follow these steps in order. Copy/paste the commands into a terminal.
 mkdir -p ~/data/db
 ```
 
-2) **Install & run MongoDB as a Homebrew service (recommended):**
+2) **In Terminal 1: Install & run MongoDB as a Homebrew service (recommended):**
+   - prerequisite: Have Homebrew installed on your macOS device.
 
 ```bash
 brew tap mongodb/brew
