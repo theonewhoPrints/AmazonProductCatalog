@@ -96,7 +96,6 @@ If it isn't, update via https://nodejs.org/en/download
 4) **Clone the repository:**
 
 ```powershell
-cd downloads
 git clone https://github.com/theonewhoPrints/AmazonProductCatalog.git
 cd AmazonProductCatalog
 ```
