@@ -125,6 +125,7 @@ Open your browser and go to:
 👉 [http://localhost:4000](http://localhost:4000)
 
 If port 4000 is in use, change it in the `.env` file under the `server/` directory (for example, set it to `4001`).
+- might take a few seconds to load on windows, so be patient.
 
 10) **(Optional) Test the endpoints:**
 
