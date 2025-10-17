@@ -88,6 +88,10 @@ curl http://localhost:4000/api/products
 ## Quick local setup (Windows)
 
 Follow these steps carefully using **PowerShell** (recommended) or **Command Prompt**. You should have 2 shells or 2 command prompts open.
+0) **Update Node.js:**
+
+Make sure Node.js is on version v22.20.0+
+If it isn't, update via https://nodejs.org/en/download
 
 1) **Create a local MongoDB data directory:**
 
@@ -123,14 +127,12 @@ cd AmazonProductCatalog
 5) **In Shell 2:Import the CSV into MongoDB:**
 
 ```powershell
-mongoimport --type csv `
-  --file "marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data.csv" `
-  --headerline `
-  --db demo `
-  --collection productcatalog
+mongoimport --type csv   --file marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data.csv   --headerline   --db demo   --collection productcatalog
 ```
 
 > ⚠️ Make sure `mongoimport` is in your PATH (it’s included with MongoDB Database Tools).
+> Download it here: https://www.mongodb.com/try/download/community
+> You may have to manually add C:\Program Files\MongoDB\Tools\100\bin to your path variables.
 
 6) **In Shell 2:Install server dependencies:**
 
