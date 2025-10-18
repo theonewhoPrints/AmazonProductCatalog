@@ -16,40 +16,37 @@ Follow these steps in order. Copy/paste the commands into a terminal.
 Make sure Node.js is on version v22.20.0+ If it isn’t, update via
 https://nodejs.org/en/download or preferred method (can use homebrew)
 
-1)  If you don’t have homebrew installed -run in terminal:
+1)  If you don’t have homebrew installed -run:
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-2)  Install & run MongoDB as a Homebrew service in terminal 
+2)  Install & run MongoDB as a Homebrew service:
 
     brew tap mongodb/brew
     brew install mongodb-community
     brew services start mongodb/brew/mongodb-community
 
-4)  Go inside the directory of the code in the terminal:
 
-    cd AmazonProductCatalog
-
-5)  Import the CSV into MongoDB with this command in the terminal:
+3)  Import the CSV into MongoDB with this command in main directory of app:
 
     mongoimport --type csv   --file marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data.csv   --headerline   --db demo   --collection productcatalog
 
-6)  Install server dependencies:
+4)  Install server dependencies:
 
     cd server
     npm install
 
-7)  Start the server (from server/):
+5)  Start the server (from server/):
 
     npm run dev
 
-8)  Check the app:
+6)  Check the app:
 
 Go to: http://localhost:4000
 
 You should see the CRUD user interface.
 
-9)  If port 4000 is in use, change it to 4001 in the .env file under the
+7)  If port 4000 is in use, change it to 4001 in the .env file under the
     server/ directory.
 
 OPTIONAL: Test the server endpoints:
@@ -95,25 +92,22 @@ https://nodejs.org/en/download
 -   exit powershell, and now re-open it for next step(don’t have to
     re-open as administrator).
 
-4)  go into the directory of the code in powershell:
-    cd AmazonProductCatalog
-
-5)  Import the CSV into MongoDB with the following command in PowerShell:
+4)  Import the CSV into MongoDB with this command in main directory of app:
 
     mongoimport --type csv   --file marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data.csv   --headerline   --db demo   --collection productcatalog
 
   ⚠️ Make sure mongoimport is in your PATH (should be from step 2).
 
-6)  Install server dependencies:
+5)  Install server dependencies:
 
     cd server
     npm install
 
-7)  Start the server (from server/):
+6)  Start the server (from server/):
 
     npm run dev
 
-9)  Check the app:
+7)  Check the app:
 
 Open your browser and go to:
 👉 http://localhost:4000
@@ -122,7 +116,7 @@ If port 4000 is in use, change it in the .env file under the server/
 directory (for example, set it to 4001). - might take a few seconds to
 load on windows, so be patient.
 
-10) (Optional) Test the endpoints:
+8) (Optional) Test the endpoints:
 
     curl http://localhost:4000/api/health
     # Expected: {"ok":true}
