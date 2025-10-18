@@ -16,22 +16,21 @@ Follow these steps in order. Copy/paste the commands into a terminal.
 Make sure Node.js is on version v22.20.0+ If it isn’t, update via
 https://nodejs.org/en/download or preferred method (can use homebrew)
 
-1)  If you don’t have homebrew installed -run:
+1)  If you don’t have homebrew installed -run in terminal:
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-2)  Install & run MongoDB as a Homebrew service
+2)  Install & run MongoDB as a Homebrew service in terminal 
 
     brew tap mongodb/brew
     brew install mongodb-community
     brew services start mongodb/brew/mongodb-community
 
-4)  Clone the repo and change into it:
+4)  Go inside the directory of the code in the terminal:
 
-    git clone https://github.com/theonewhoPrints/AmazonProductCatalog.git
     cd AmazonProductCatalog
 
-5)  Import the CSV into MongoDB:
+5)  Import the CSV into MongoDB with this command in the terminal:
 
     mongoimport --type csv   --file marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data.csv   --headerline   --db demo   --collection productcatalog
 
@@ -96,12 +95,10 @@ https://nodejs.org/en/download
 -   exit powershell, and now re-open it for next step(don’t have to
     re-open as administrator).
 
-4)  Clone the repository:
-
-    git clone https://github.com/theonewhoPrints/AmazonProductCatalog.git
+4)  go into the directory of the code in powershell:
     cd AmazonProductCatalog
 
-5)  Import the CSV into MongoDB:
+5)  Import the CSV into MongoDB with the following command in PowerShell:
 
     mongoimport --type csv   --file marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data.csv   --headerline   --db demo   --collection productcatalog
 
